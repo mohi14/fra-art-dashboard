@@ -133,6 +133,7 @@ import AddAdmin from "./pages/ecommerce/AddAdmin";
 import EditAdmin from "./pages/ecommerce/EditAdmin";
 import EditRole from "./pages/ecommerce/EditRole";
 import EditMailConfiguration from "./pages/ecommerce/EditMailConfiguration";
+import EditTransactionToken from "./pages/ecommerce/EditTransactionToken";
 
 function App() {
   const location = useLocation();
@@ -226,6 +227,10 @@ function App() {
         <Route
           path="/system/add-transaction"
           element={<AddTransactionToken />}
+        />
+        <Route
+          path="/system/edit-transaction/:id"
+          element={<EditTransactionToken />}
         />
 
         <Route

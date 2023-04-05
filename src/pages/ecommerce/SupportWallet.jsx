@@ -35,22 +35,23 @@ const SupportWallet = () => {
                 </h1>
               </div>
 
-
               <div>
-                  <label className="mr-2" for="status">
-         Wallet name
-                  </label>
-                  <input
-                    className="border-none"
-                    type="text"
-                    placeholder="please enter wallet name"
-                  />
-                </div>
+                <label className="mr-2" for="status">
+                  Wallet name
+                </label>
+                <input
+                  className="border-none"
+                  type="text"
+                  placeholder="please enter wallet name"
+                />
+              </div>
 
               {/* Right: Actions */}
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
-            
-                <Link to="/system/add-support-wallet" className="btn bg-indigo-500 hover:bg-indigo-600 text-white">
+                <Link
+                  to="/system/add-support-wallet"
+                  className="btn bg-indigo-500 hover:bg-indigo-600 text-white"
+                >
                   <svg
                     className="w-4 h-4 fill-current opacity-50 shrink-0"
                     viewBox="0 0 16 16"
@@ -169,9 +170,9 @@ const SupportWallet = () => {
             </div>
 
             {/* Pagination */}
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <PaginationClassic />
-            </div>
+            </div> */}
           </div>
         </main>
       </div>

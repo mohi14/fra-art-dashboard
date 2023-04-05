@@ -23,12 +23,34 @@ const TransactionCurrency = () => {
 
   const [allTransactions, setAllTransactions] = useState();
 
+  const [chainName, setChainName] = useState("");
+  const [token, setToken] = useState("");
+  const [tokenType, setTokenType] = useState("");
+  const [contractAddress, setContractAddress] = useState("");
+  const [status, setStatus] = useState("");
+
   const getAllTransactions = () => {
     axios
-      .get("/api/system-config/all-transaction-currency")
+      .get(
+        `/api/system-config/all-transaction-currency?chainName=${chainName}&token=${token}&tokenType=${tokenType}&contractAddress=${contractAddress}&status=${status}`
+      )
       .then((res) => setAllTransactions(res.data));
   };
   console.log(allTransactions);
+
+  const handleStatus = (status, id) => {
+    if (window.confirm("Are you sure?")) {
+      axios
+        .put(`/api/system-config/transaction-currency/status/${id}`, {
+          status: status,
+        })
+        .then((res) => {
+          if (res.status === 200) {
+            getAllTransactions();
+          }
+        });
+    }
+  };
 
   const handleDelete = (id) => {
     if (window.confirm("Are you really want to delete?")) {
@@ -44,7 +66,7 @@ const TransactionCurrency = () => {
 
   useEffect(() => {
     getAllTransactions();
-  }, []);
+  }, [chainName, contractAddress, token, tokenType, status]);
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -70,12 +92,18 @@ const TransactionCurrency = () => {
                 <label className="mr-2" for="status">
                   Chain
                 </label>
-                <select className="border-none" name="status" id="status">
+                {/* <select className="border-none" name="status" id="status">
                   <option>Please select the main chain</option>
                   <option>A</option>
                   <option>B</option>
                   <option>C</option>
-                </select>
+                </select> */}
+                <input
+                  className="border-none"
+                  type="text"
+                  placeholder="please enter chain"
+                  onChange={(e) => setChainName(e.target.value)}
+                />
               </div>
               <div>
                 <label className="mr-2" for="status">
@@ -84,40 +112,57 @@ const TransactionCurrency = () => {
                 <input
                   className="border-none"
                   type="text"
-                  placeholder="please enter role name"
+                  placeholder="please enter token"
+                  onChange={(e) => setToken(e.target.value)}
                 />
               </div>
               <div>
                 <label className="mr-2" for="status">
                   Token type
                 </label>
-                <select className="border-none" name="status" id="status">
+                {/* <select className="border-none" name="status" id="status">
                   <option>Please select a token type</option>
                   <option>A</option>
                   <option>B</option>
                   <option>C</option>
-                </select>
+                </select> */}
+                <input
+                  className="border-none"
+                  type="text"
+                  placeholder="please enter token type"
+                  onChange={(e) => setTokenType(e.target.value)}
+                />
               </div>
               <div>
                 <label className="mr-2" for="status">
                   Contract address
                 </label>
-                <select className="border-none" name="status" id="status">
+                {/* <select className="border-none" name="status" id="status">
                   <option>Please enter the contract</option>
                   <option>A</option>
                   <option>B</option>
                   <option>C</option>
-                </select>
+                </select> */}
+                <input
+                  className="border-none"
+                  type="text"
+                  placeholder="please enter contract address"
+                  onChange={(e) => setContractAddress(e.target.value)}
+                />
               </div>
               <div>
                 <label className="mr-2" for="status">
                   Status
                 </label>
-                <select className="border-none" name="status" id="status">
-                  <option>Please select a status</option>
-                  <option>A</option>
-                  <option>B</option>
-                  <option>C</option>
+                <select
+                  className="border-none"
+                  name="status"
+                  id="status"
+                  onChange={(e) => setStatus(e.target.value)}
+                >
+                  <option value="">All</option>
+                  <option value="true">Enable</option>
+                  <option value="false">Disable</option>
                 </select>
               </div>
 
@@ -226,11 +271,16 @@ const TransactionCurrency = () => {
                         <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                           <div>{transaction?.usdChangeRate}</div>
                         </td>
-                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                        <td
+                          className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap"
+                          onClick={() =>
+                            handleStatus(!transaction?.status, transaction?._id)
+                          }
+                        >
                           <div className="bg-blue-200 p-2 rounded-lg">
                             {transaction?.status === false
-                              ? "Enable"
-                              : "Disable"}
+                              ? "Disable"
+                              : "Enable"}
                           </div>
                         </td>
 
@@ -239,15 +289,19 @@ const TransactionCurrency = () => {
                         </td>
                         <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
                           <div className="space-x-1">
-                            <button className="text-slate-400 hover:text-slate-500 rounded-full">
-                              <span className="sr-only">Edit</span>
-                              <svg
-                                className="w-8 h-8 fill-current"
-                                viewBox="0 0 32 32"
-                              >
-                                <path d="M19.7 8.3c-.4-.4-1-.4-1.4 0l-10 10c-.2.2-.3.4-.3.7v4c0 .6.4 1 1 1h4c.3 0 .5-.1.7-.3l10-10c.4-.4.4-1 0-1.4l-4-4zM12.6 22H10v-2.6l6-6 2.6 2.6-6 6zm7.4-7.4L17.4 12l1.6-1.6 2.6 2.6-1.6 1.6z" />
-                              </svg>
-                            </button>
+                            <Link
+                              to={`/system/edit-transaction/${transaction?._id}`}
+                            >
+                              <button className="text-slate-400 hover:text-slate-500 rounded-full">
+                                <span className="sr-only">Edit</span>
+                                <svg
+                                  className="w-8 h-8 fill-current"
+                                  viewBox="0 0 32 32"
+                                >
+                                  <path d="M19.7 8.3c-.4-.4-1-.4-1.4 0l-10 10c-.2.2-.3.4-.3.7v4c0 .6.4 1 1 1h4c.3 0 .5-.1.7-.3l10-10c.4-.4.4-1 0-1.4l-4-4zM12.6 22H10v-2.6l6-6 2.6 2.6-6 6zm7.4-7.4L17.4 12l1.6-1.6 2.6 2.6-1.6 1.6z" />
+                                </svg>
+                              </button>
+                            </Link>
 
                             <button
                               className="text-rose-500 hover:text-rose-600 rounded-full"
