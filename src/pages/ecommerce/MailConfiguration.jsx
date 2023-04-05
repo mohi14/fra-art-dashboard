@@ -18,14 +18,26 @@ const MailConfiguration = () => {
 
   const [mailConfiguration, setMailConfiguration] = useState("");
 
-  const getMainConfiguration = () => {
+  const getMailConfiguration = () => {
     axios
       .get("/api/system-config/all-mail-configuration")
       .then((res) => setMailConfiguration(res.data));
   };
-  console.log(mailConfiguration);
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you really want to delete")) {
+      axios
+        .delete(`/api/system-config/mail-configuration/delete/${id}`)
+        .then((res) => {
+          if (res.status === 200) {
+            getMailConfiguration();
+          }
+        });
+    }
+  };
+
   useEffect(() => {
-    getMainConfiguration();
+    getMailConfiguration();
   }, []);
   return (
     <div className="flex h-screen overflow-hidden">
@@ -161,7 +173,10 @@ const MailConfiguration = () => {
                               </svg>
                             </button>
 
-                            <button className="text-rose-500 hover:text-rose-600 rounded-full">
+                            <button
+                              className="text-rose-500 hover:text-rose-600 rounded-full"
+                              onClick={() => handleDelete(mail?._id)}
+                            >
                               <span className="sr-only">Delete</span>
                               <svg
                                 className="w-8 h-8 fill-current"
