@@ -1,14 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
 import axios from "../../utils/axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const AddRole = () => {
+const EditRole = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigate = useNavigate();
+
+  const { id } = useParams();
+
+  const [singleRole, setSingleRole] = useState("");
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -24,12 +28,17 @@ const AddRole = () => {
 
     console.log(info);
 
-    axios.post("/api/create-role", info).then((res) => {
+    axios.put(`/api/edit-role/${id}`, info).then((res) => {
       if (res.status === 200) {
         navigate("/system/role-management");
       }
     });
   };
+
+  useEffect(() => {
+    axios.get(`/api//get-role/${id}`).then((res) => setSingleRole(res.data));
+  }, []);
+  console.log(singleRole);
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -50,7 +59,7 @@ const AddRole = () => {
                   <header className="mb-6">
                     {/* Title */}
                     <h1 className="text-2xl md:text-3xl text-slate-800 font-bold mb-2">
-                      Add role ✨
+                      Edit role ✨
                     </h1>
                   </header>
                   {/* Billing Information */}
@@ -74,6 +83,7 @@ const AddRole = () => {
                               placeholder="Please enter role name"
                               name="role"
                               required
+                              Value={singleRole?.role}
                             />
                           </div>
                           <div className="flex-1">
@@ -88,10 +98,30 @@ const AddRole = () => {
                               className="w-full border-none"
                               name="permission"
                             >
-                              <option value="edit">Edit</option>
-                              <option value="create">Create</option>
-                              <option value="view">View</option>
-                              <option value="delete">Delete</option>
+                              <option
+                                selected={singleRole?.permission === "edit"}
+                                value="edit"
+                              >
+                                Edit
+                              </option>
+                              <option
+                                selected={singleRole?.permission === "create"}
+                                value="create"
+                              >
+                                Create
+                              </option>
+                              <option
+                                selected={singleRole?.permission === "view"}
+                                value="view"
+                              >
+                                View
+                              </option>
+                              <option
+                                selected={singleRole?.permission === "delete"}
+                                value="delete"
+                              >
+                                Delete
+                              </option>
                             </select>
                           </div>
                         </div>
@@ -221,4 +251,4 @@ const AddRole = () => {
   );
 };
 
-export default AddRole;
+export default EditRole;

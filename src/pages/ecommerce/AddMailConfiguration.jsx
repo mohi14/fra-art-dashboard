@@ -2,9 +2,43 @@ import React, { useState } from "react";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
+import axios from "../../utils/axios";
+import { useNavigate } from "react-router-dom";
 
 const AddMailConfiguration = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    const form = event.target;
+
+    const account = form.account.value;
+    const password = form.password.value;
+    const port = Number(form.port.value);
+    const senderServer = form.senderServer.value;
+    const receivingServer = form.receivingServer.value;
+    const whetherTheDefault =
+      form.whetherTheDefault.value === "false" ? false : true;
+    const sender = form.sender.value;
+
+    const info = {
+      account,
+      password,
+      port,
+      senderServer,
+      receivingServer,
+      whetherTheDefault,
+      sender,
+    };
+    axios
+      .post("/api/system-config/add-mail-configuration", info)
+      .then((res) => {
+        if (res.status === 200) {
+          navigate("/system/mail-configuration");
+        }
+      });
+  };
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -30,7 +64,7 @@ const AddMailConfiguration = () => {
                   </header>
                   {/* Billing Information */}
                   <div>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                       <div className="space-y-4">
                         {/* 2nd row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
@@ -46,6 +80,8 @@ const AddMailConfiguration = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter your account number"
+                              required
+                              name="account"
                             />
                           </div>
                           <div className="flex-1">
@@ -60,6 +96,8 @@ const AddMailConfiguration = () => {
                               className="form-input w-full"
                               type="password"
                               placeholder="Please enter your password"
+                              required
+                              name="password"
                             />
                           </div>
                         </div>
@@ -75,8 +113,11 @@ const AddMailConfiguration = () => {
                             <input
                               id="card-address"
                               className="form-input w-full"
-                              type="text"
+                              type="number"
                               placeholder="Please enter port"
+                              required
+                              min={0}
+                              name="port"
                             />
                           </div>
                           <div className="flex-1">
@@ -92,6 +133,8 @@ const AddMailConfiguration = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter the sender server"
+                              required
+                              name="senderServer"
                             />
                           </div>
                         </div>
@@ -110,6 +153,8 @@ const AddMailConfiguration = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter port"
+                              required
+                              name="receivingServer"
                             />
                           </div>
 
@@ -124,10 +169,11 @@ const AddMailConfiguration = () => {
                             <select
                               id="card-country"
                               className="form-select w-full"
+                              required
+                              name="whetherTheDefault"
                             >
-                              <option>Select DFefault</option>
-                              <option>USA</option>
-                              <option>United Kingdom</option>
+                              <option value={false}>No</option>
+                              <option value={true}>Yes</option>
                             </select>
                           </div>
                         </div>
@@ -146,6 +192,8 @@ const AddMailConfiguration = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter the sender"
+                              name="sender"
+                              required
                             />
                           </div>
                         </div>
@@ -157,7 +205,10 @@ const AddMailConfiguration = () => {
                         >
                           Indeed Set
                         </button>
-                        <button className="border  rounded-lg p-2" type="">
+                        <button
+                          className="border  rounded-lg p-2"
+                          type="submit"
+                        >
                           Take Eliminate
                         </button>
                       </div>

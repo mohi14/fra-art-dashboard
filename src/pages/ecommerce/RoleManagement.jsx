@@ -1,18 +1,69 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import DateSelect from "../../components/DateSelect";
 import PaginationClassic from "../../components/PaginationClassic";
 import Header from "../../partials/Header";
 import Sidebar from "../../partials/Sidebar";
+import axios from "../../utils/axios";
+
+const formateData = (date) => {
+  const convertedDate = new Date(date);
+  return convertedDate.toDateString();
+};
 
 const RoleManagement = () => {
   const [comments, setComments] = useState(true);
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const [roles, setRoles] = useState();
+
+  const [allAdmins, setAllAdmins] = useState("");
+
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
   };
+
+  const getRole = () => {
+    axios.get("/api/get-role").then((res) => setRoles(res.data));
+  };
+
+  const handleChange = (event) => {
+    if (window.confirm("Are you sure?")) {
+      const data = JSON.parse(event.target.value);
+
+      console.log(data);
+      const info = {
+        email: data?.email,
+      };
+      axios.put(`/api/assign-user/${data?.id}`, info).then((res) => {
+        if (res.status === 200) {
+          getRole();
+        }
+      });
+    } else {
+      event.target.value = 0;
+    }
+
+    console.log(event.target.value);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you really want to delete?")) {
+      axios.delete(`/api/role/delete/${id}`).then((res) => {
+        if (res.status === 200) {
+          getRole();
+        }
+      });
+    }
+  };
+
+  useEffect(() => {
+    getRole();
+
+    axios.get("/admin-api/getAdmins").then((res) => setAllAdmins(res.data));
+  }, []);
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -36,7 +87,7 @@ const RoleManagement = () => {
 
               {/* Right: Actions */}
 
-              <div>
+              {/* <div>
                 <label className="mr-2" for="status">
                   Role name
                 </label>
@@ -76,7 +127,7 @@ const RoleManagement = () => {
                   type="date"
                   placeholder="please enter role name"
                 />
-              </div>
+              </div> */}
 
               <Link
                 to="/system/add-role"
@@ -99,34 +150,33 @@ const RoleManagement = () => {
                 {/* Table header */}
                 <thead className="text-xs uppercase text-slate-500 bg-slate-50 border-t border-slate-200">
                   <tr>
-                    <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
+                    {/* <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
                       <div className="flex items-center">
                         <label className="inline-flex">
                           <span className="sr-only">Select all</span>
                           <input className="form-checkbox" type="checkbox" />
                         </label>
                       </div>
-                    </th>
-                    <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                    </th> */}
+                    {/* <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                       <div className="font-semibold text-left">Role number</div>
-                    </th>
+                    </th> */}
                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                       <div className="font-semibold text-left">Role Name</div>
                     </th>
 
                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="font-semibold text-left">
-                        Permission character
-                      </div>
+                      <div className="font-semibold text-left">Permission</div>
                     </th>
                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="font-semibold text-left">
-                        Display order
-                      </div>
+                      <div className="font-semibold text-left">User</div>
                     </th>
                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                      <div className="font-semibold text-left">Assign User</div>
+                    </th>
+                    {/* <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                       <div className="font-semibold text-left">Status</div>
-                    </th>
+                    </th> */}
 
                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
                       <div className="font-semibold text-left">
@@ -135,22 +185,94 @@ const RoleManagement = () => {
                     </th>
 
                     <th className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="font-semibold text-left">Operation</div>
+                      <div className="font-semibold text-left">Action</div>
                     </th>
                   </tr>
                 </thead>
+                <tbody className="text-sm">
+                  {roles?.map((rol, index) => (
+                    <tr key={index}>
+                      {/* <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
+                      <div className="flex items-center">
+                        <label className="inline-flex">
+                          <span className="sr-only">Select</span>
+                          <input className="form-checkbox" type="checkbox" />
+                        </label>
+                      </div>
+                    </td> */}
+
+                      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                        <div>{rol.role}</div>
+                      </td>
+                      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                        <div>{rol.permission}</div>
+                        {/* <div>{admin?.name}</div> */}
+                      </td>
+                      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                        <div>{rol.email ? rol.email : "Not Assigned"}</div>
+                        {/* <div>{admin?.name}</div> */}
+                      </td>
+                      <td className="px-2 py-3 whitespace-nowrap">
+                        <select
+                          className="w-full border-none"
+                          name="permission"
+                          onChange={handleChange}
+                        >
+                          <option selected disabled value={0}>
+                            Select User
+                          </option>
+                          {allAdmins &&
+                            allAdmins.length > 0 &&
+                            allAdmins?.map((admin) => (
+                              <option
+                                selected={rol.email === admin.email}
+                                key={admin?._id}
+                                value={JSON.stringify({
+                                  email: admin?.email,
+                                  id: rol?._id,
+                                })}
+                              >
+                                {admin?.name}
+                              </option>
+                            ))}
+                        </select>
+                        {/* <div>{admin?.email}</div> */}
+                      </td>
+
+                      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                        {/* <div>{formateData(admin?.createdAt)}</div> */}
+                        <div>{formateData(rol.createdAt)}</div>
+                      </td>
+                      <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                        <Link to={`/system/edit-role/${rol?._id}`}>
+                          {" "}
+                          <span className="text-blue-600 cursor-pointer">
+                            Edit{" "}
+                          </span>
+                        </Link>
+                        <span
+                          className="text-blue-600 cursor-pointer"
+                          onClick={() => handleDelete(rol?._id)}
+                        >
+                          {" "}
+                          Delete
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
               </table>
             </div>
-            <button className="w-full border py-2 my-5">No data</button>
+            {/* <button className="w-full border py-2 my-5">No data</button> */}
 
             {/* Pagination */}
-            <div className="mt-8">
+            {/* <div className="mt-8">
               <PaginationClassic
                 setPageNumber={"setPageNumber"}
                 pageNumber={"pageNumber"}
                 allCategories={"supports"}
               />
-            </div>
+            </div> */}
           </div>
         </main>
       </div>

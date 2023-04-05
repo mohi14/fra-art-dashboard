@@ -131,6 +131,7 @@ import EditArticle from "./pages/ecommerce/EditArticle";
 import EditSupport from "./pages/ecommerce/EditSupport";
 import AddAdmin from "./pages/ecommerce/AddAdmin";
 import EditAdmin from "./pages/ecommerce/EditAdmin";
+import EditRole from "./pages/ecommerce/EditRole";
 
 function App() {
   const location = useLocation();
@@ -260,6 +261,7 @@ function App() {
 
         <Route path="/system/add-main-chain" element={<AddMainChain />} />
         <Route path="/system/add-role" element={<AddRole />} />
+        <Route path="/system/edit-role/:id" element={<EditRole />} />
 
         <Route path="/system/modify-menu" element={<ModifyMenu />} />
         <Route path="/system/support-wallet" element={<SupportWallet />} />
