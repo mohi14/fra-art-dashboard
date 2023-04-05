@@ -1,10 +1,44 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
 
 const AddSupportWallet = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [sorts, setSort] = useState(0);
+
+  const handleSortDecrease = () => {
+    if (sorts !== 0) {
+      setSort((prev) => prev - 1);
+    }
+  };
+
+  const [file, setFile] = useState();
+  const imageRef = useRef();
+
+  const handleChange = (e) => {
+    setFile(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const imageHandler = () => {
+    imageRef.current.click();
+  };
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const form = event.target;
+
+    const walletName = form.walletName.value;
+    const isSupported = form.isSupported.value;
+    const IOSJumpLink = form.IOSJumpLink.value;
+    const IOSDownloadLink = form.IOSDownloadLink.value;
+    const androidJumpLink = form.androidJumpLink.value;
+    const androidDownloadLink = form.androidDownloadLink.value;
+    const canIWakeUp = form.canIWakeUp.value;
+  };
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -30,23 +64,39 @@ const AddSupportWallet = () => {
                   </header>
                   {/* Billing Information */}
                   <div>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                       <div className="space-y-4">
                         {/* 1st row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                        <div className="flex-1">
+                          <div className="flex-1">
                             <label
                               className="block font-medium mb-1"
                               htmlFor="card-country"
                             >
-                             Wallet Icon
+                              Wallet Icon
                             </label>
 
-                            <div className="border-dotted border-2 p-16">
+                            <div
+                              className="border-dotted border-2 p-16"
+                              onClick={imageHandler}
+                            >
                               <img
                                 width={200}
-                                src="https://image.pngaaa.com/781/4773781-middle.png"
+                                src={
+                                  file
+                                    ? file
+                                    : "https://image.pngaaa.com/781/4773781-middle.png"
+                                }
                                 alt=""
+                              />
+                              <input
+                                style={{ display: "none" }}
+                                ref={imageRef}
+                                accept="image/*"
+                                onChange={handleChange}
+                                type="file"
+                                name="img"
+                                required
                               />
                             </div>
                           </div>
@@ -61,18 +111,31 @@ const AddSupportWallet = () => {
                             <select
                               id="card-country"
                               className="form-select w-full"
+                              name="isSupported"
                             >
-                              <option>Please select whether to</option>
-                              <option>USA</option>
-                              <option>United Kingdom</option>
+                              <option value={true}>Yes</option>
+                              <option value={false}>No</option>
                             </select>
                           </div>
-                         
-                         
                         </div>
                         {/* 1st row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                        
+                          <div className="flex-1">
+                            <label
+                              className="block text-sm font-medium mb-1"
+                              htmlFor="card-address"
+                            >
+                              Wallet Name
+                              <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              id="card-address"
+                              className="form-input w-full"
+                              type="text"
+                              placeholder="Please enter wallet name"
+                              name="walletName"
+                            />
+                          </div>
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -84,10 +147,10 @@ const AddSupportWallet = () => {
                             <select
                               id="card-country"
                               className="form-select w-full"
+                              name="canIWakeUp"
                             >
-                              <option>Please select whether you</option>
-                              <option>USA</option>
-                              <option>United Kingdom</option>
+                              <option value={true}>Yes</option>
+                              <option value={false}>No</option>
                             </select>
                           </div>
                           <div className="flex-1">
@@ -103,12 +166,12 @@ const AddSupportWallet = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter IOS jump link"
+                              name="IOSJumpLink"
                             />
                           </div>
                         </div>
                         {/* 2nd row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                         
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -122,6 +185,7 @@ const AddSupportWallet = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter IOS download link"
+                              name="IOSDownloadLink"
                             />
                           </div>
                           <div className="flex-1">
@@ -137,12 +201,12 @@ const AddSupportWallet = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter the android jump link"
+                              name="androidJumpLink"
                             />
                           </div>
                         </div>
                         {/* 2nd row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                         
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -156,6 +220,7 @@ const AddSupportWallet = () => {
                               className="form-input w-full"
                               type="text"
                               placeholder="Please enter the android download link"
+                              name="androidDownloadLink"
                             />
                           </div>
                           <div className="flex-1">
@@ -166,7 +231,10 @@ const AddSupportWallet = () => {
                               Sort <span className="text-rose-500">*</span>
                             </label>
                             <div className="flex items-center">
-                              <span className="bg-gray-200 px-3 py-1 border">
+                              <span
+                                className="bg-gray-200 px-3 py-1 border"
+                                onClick={handleSortDecrease}
+                              >
                                 -
                               </span>
 
@@ -175,25 +243,23 @@ const AddSupportWallet = () => {
                                 className="form-input w-full"
                                 type="text"
                                 placeholder="Please enter"
+                                value={sorts}
+                                readOnly
                               />
-                              <span className="bg-gray-200 px-3 py-1 border">
+                              <span
+                                className="bg-gray-200 px-3 py-1 border"
+                                onClick={() => setSort((prev) => prev + 1)}
+                              >
                                 +
                               </span>
                             </div>
-
-
-
-
+                          </div>
                         </div>
-                        </div>
-                      
-                        
-                      
                       </div>
                       <div className="flex justify-end gap-6 my-5">
                         <button
                           className="bg-blue-500 text-white rounded-lg p-2"
-                          type=""
+                          type="submit"
                         >
                           Determine
                         </button>
