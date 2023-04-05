@@ -132,6 +132,7 @@ import EditSupport from "./pages/ecommerce/EditSupport";
 import AddAdmin from "./pages/ecommerce/AddAdmin";
 import EditAdmin from "./pages/ecommerce/EditAdmin";
 import EditRole from "./pages/ecommerce/EditRole";
+import EditMailConfiguration from "./pages/ecommerce/EditMailConfiguration";
 
 function App() {
   const location = useLocation();
@@ -252,6 +253,10 @@ function App() {
         <Route
           path="/system/add-mail-configuration"
           element={<AddMailConfiguration />}
+        />
+        <Route
+          path="/system/edit-mail-configuration/:id"
+          element={<EditMailConfiguration />}
         />
         <Route
           path="/system/configuration-management"

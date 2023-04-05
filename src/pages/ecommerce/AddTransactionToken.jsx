@@ -1,11 +1,101 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useRef, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
+import axios from "../../utils/axios";
 
 const AddTransactionToken = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const [accuracys, setAccuracy] = useState(0);
+  const [sorts, setSort] = useState(0);
+
+  const navigate = useNavigate();
+
+  const handleAccurecyDecrease = () => {
+    if (accuracys !== 0) {
+      setAccuracy((prev) => prev - 1);
+    }
+  };
+
+  const handleSortDecrease = () => {
+    if (sorts !== 0) {
+      setSort((prev) => prev - 1);
+    }
+  };
+  const [file, setFile] = useState();
+  const imageRef = useRef();
+
+  const handleChange = (e) => {
+    setFile(URL.createObjectURL(e.target.files[0]));
+  };
+
+  const imageHandler = () => {
+    imageRef.current.click();
+  };
+
+  const imageHostKey = process.env.REACT_APP_imgBB_key;
+
+  console.log(imageHostKey, "djfsjfk");
+
+  const handleSubmit = (event) => {
+    event.preventDefault();
+
+    const form = event.target;
+
+    const chainName = form.chainName.value;
+    const token = form.token.value;
+    const tokenType = form.tokenType.value;
+    const contractAddress = form.contractAddress.value;
+    const accuracy = accuracys;
+    const sort = sorts;
+    const usdChangeRate = Number(form.usdChangeRate.value);
+
+    const data = {
+      chainName,
+      token,
+      tokenType,
+      contractAddress,
+      accuracy,
+      sort,
+      usdChangeRate,
+    };
+
+    const image = form.img.files[0];
+
+    const fromData = new FormData();
+    fromData.append("image", image);
+    const url = `https://api.imgbb.com/1/upload?key=7378254be2fef904c69a0c05769ced22`;
+
+    fetch(url, {
+      method: "POST",
+      body: fromData,
+    })
+      .then((res) => res.json())
+      .then((imgData) => {
+        if (imgData.success) {
+          const info = {
+            chainName,
+            icon: imgData.data.url,
+            token,
+            tokenType,
+            contractAddress,
+            accuracy,
+            sort,
+            usdChangeRate,
+          };
+
+          axios
+            .post("/api/system-config/add-transanction-currency", info)
+            .then((res) => {
+              if (res.status === 200) {
+                navigate("/system/transaction-currency");
+              }
+            });
+        }
+      });
+  };
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -31,7 +121,7 @@ const AddTransactionToken = () => {
                   </header>
                   {/* Billing Information */}
                   <div>
-                    <form>
+                    <form onSubmit={handleSubmit}>
                       <div className="space-y-4">
                         {/* 1st row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
@@ -42,51 +132,64 @@ const AddTransactionToken = () => {
                             >
                               Chain <span className="text-rose-500">*</span>
                             </label>
-                            <select
-                              id="card-country"
-                              className="form-select w-full"
-                            >
-                              <option>Please select the main chain</option>
-                              <option>USA</option>
-                              <option>United Kingdom</option>
-                            </select>
+                            <input
+                              id="card-address"
+                              className="form-input w-full"
+                              type="text"
+                              name="chainName"
+                              required
+                            />
                           </div>
                           <div className="flex-1">
                             <label
                               className="block font-medium mb-1"
                               htmlFor="card-country"
                             >
-                            Icon
+                              Icon
                             </label>
 
-                            <div className="border-dotted border-2 p-16">
+                            <div
+                              onClick={imageHandler}
+                              className="border-dotted border-2 p-16"
+                            >
                               <img
                                 width={200}
-                                src="https://image.pngaaa.com/781/4773781-middle.png"
+                                src={
+                                  file
+                                    ? file
+                                    : "https://image.pngaaa.com/781/4773781-middle.png"
+                                }
                                 alt=""
+                              />
+                              <input
+                                style={{ display: "none" }}
+                                ref={imageRef}
+                                accept="image/*"
+                                onChange={handleChange}
+                                type="file"
+                                name="img"
+                                required
                               />
                             </div>
                           </div>
-                        
                         </div>
                         {/* 2nd row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                        <div className="flex-1">
+                          <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
                               htmlFor="card-country"
                             >
-                              Token Type type{" "}
+                              Token Type{" "}
                               <span className="text-rose-500">*</span>
                             </label>
-                            <select
-                              id="card-country"
-                              className="form-select w-full"
-                            >
-                              <option>Please enter token type</option>
-                              <option>USA</option>
-                              <option>United Kingdom</option>
-                            </select>
+                            <input
+                              id="card-address"
+                              className="form-input w-full"
+                              type="text"
+                              name="tokenType"
+                              required
+                            />
                           </div>
                           <div className="flex-1">
                             <label
@@ -99,13 +202,14 @@ const AddTransactionToken = () => {
                               id="card-address"
                               className="form-input w-full"
                               type="text"
+                              name="token"
+                              required
                             />
                           </div>
-                         
                         </div>
                         {/* 2nd row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                        <div className="flex-1">
+                          <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
                               htmlFor="card-country"
@@ -117,6 +221,8 @@ const AddTransactionToken = () => {
                               id="card-address"
                               className="form-input w-full"
                               type="text"
+                              name="contractAddress"
+                              required
                             />
                           </div>
                           <div className="flex-1">
@@ -127,17 +233,26 @@ const AddTransactionToken = () => {
                               Accuracy <span className="text-rose-500">*</span>
                             </label>
                             <div className="flex items-center">
-                              <span className="bg-gray-200 px-3 py-1 border">
+                              <span
+                                className="bg-gray-200 px-3 py-1 border"
+                                onClick={handleAccurecyDecrease}
+                              >
                                 -
                               </span>
 
                               <input
                                 id="card-address"
                                 className="form-input w-full"
-                                type="text"
+                                type="number"
                                 placeholder="Please enter"
+                                readOnly
+                                value={accuracys}
+                                min={0}
                               />
-                              <span className="bg-gray-200 px-3 py-1 border">
+                              <span
+                                className="bg-gray-200 px-3 py-1 border"
+                                onClick={() => setAccuracy((prev) => prev + 1)}
+                              >
                                 +
                               </span>
                             </div>
@@ -153,7 +268,10 @@ const AddTransactionToken = () => {
                               Sort <span className="text-rose-500">*</span>
                             </label>
                             <div className="flex items-center">
-                              <span className="bg-gray-200 px-3 py-1 border">
+                              <span
+                                className="bg-gray-200 px-3 py-1 border"
+                                onClick={handleSortDecrease}
+                              >
                                 -
                               </span>
 
@@ -162,8 +280,13 @@ const AddTransactionToken = () => {
                                 className="form-input w-full"
                                 type="text"
                                 placeholder="Please enter"
+                                value={sorts}
+                                readOnly
                               />
-                              <span className="bg-gray-200 px-3 py-1 border">
+                              <span
+                                className="bg-gray-200 px-3 py-1 border"
+                                onClick={() => setSort((prev) => prev + 1)}
+                              >
                                 +
                               </span>
                             </div>
@@ -180,7 +303,9 @@ const AddTransactionToken = () => {
                             <input
                               id="card-address"
                               className="form-input w-full"
-                              type="text"
+                              type="number"
+                              name="usdChangeRate"
+                              required
                             />
                           </div>
                         </div>
@@ -192,7 +317,10 @@ const AddTransactionToken = () => {
                         >
                           Indeed Set
                         </button>
-                        <button className="border  rounded-lg p-2" type="">
+                        <button
+                          className="border  rounded-lg p-2"
+                          type="submit"
+                        >
                           Take Eliminate
                         </button>
                       </div>
