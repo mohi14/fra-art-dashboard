@@ -35,9 +35,9 @@ const AddTransactionToken = () => {
     imageRef.current.click();
   };
 
-  const imageHostKey = process.env.REACT_APP_imgBB_key;
+  const imageHostKey = import.meta.env.VITE_imgBB_key;
 
-  console.log(imageHostKey, "djfsjfk");
+
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -66,7 +66,7 @@ const AddTransactionToken = () => {
 
     const fromData = new FormData();
     fromData.append("image", image);
-    const url = `https://api.imgbb.com/1/upload?key=7378254be2fef904c69a0c05769ced22`;
+    const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
 
     fetch(url, {
       method: "POST",

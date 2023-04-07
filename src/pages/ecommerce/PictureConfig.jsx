@@ -43,9 +43,8 @@ const PictureConfig = () => {
                               Project logo
                             </label>
 
-                            <div className="border-dotted border-2 p-16">
+                            <div className="w-full border-dotted border-2 p-16">
                               <img
-                                width={200}
                                 src="https://image.pngaaa.com/781/4773781-middle.png"
                                 alt=""
                               />
@@ -60,7 +59,7 @@ const PictureConfig = () => {
                               file
                             </p>
                           </div>
-                          <div className="flex-1">
+                          {/* <div className="flex-1">
                             <label
                               className="block font-medium mb-1"
                               htmlFor="card-country"
@@ -84,10 +83,10 @@ const PictureConfig = () => {
                               </span>
                               file
                             </p>
-                          </div>
+                          </div> */}
                         </div>
                         {/* 3rd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                        {/* <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block font-medium mb-1"
@@ -138,9 +137,9 @@ const PictureConfig = () => {
                               file
                             </p>
                           </div>
-                        </div>
+                        </div> */}
                         {/* 3rd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                        {/* <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block font-medium mb-1"
@@ -191,7 +190,7 @@ const PictureConfig = () => {
                               file
                             </p>
                           </div>
-                        </div>
+                        </div> */}
                         {/* 3rd row */}
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
@@ -202,11 +201,11 @@ const PictureConfig = () => {
                               All currencies icon
                             </label>
 
-                            <div className="border-dotted border-2 p-16">
+                            <div className=" border-dotted border-2 p-16">
                               <img
-                                width={200}
                                 src="https://image.pngaaa.com/781/4773781-middle.png"
                                 alt=""
+                                className="w-full"
                               />
                             </div>
                             <p>
@@ -222,7 +221,7 @@ const PictureConfig = () => {
                         </div>
 
                         {/* 2nd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                        {/* <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -253,10 +252,10 @@ const PictureConfig = () => {
                               placeholder="Please enter the default protocol"
                             />
                           </div>
-                        </div>
+                        </div> */}
 
                         {/* 2nd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                        {/* <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -287,9 +286,9 @@ const PictureConfig = () => {
                               placeholder="Please enter the default protocol"
                             />
                           </div>
-                        </div>
+                        </div> */}
                         {/* 2nd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                        {/* <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -305,7 +304,7 @@ const PictureConfig = () => {
                               placeholder="Please enter the default protocol"
                             />
                           </div>
-                        </div>
+                        </div> */}
                       </div>
                       <div className="flex justify-end gap-6 my-5">
                         <button

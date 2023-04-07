@@ -1,11 +1,11 @@
-import React, { useRef, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
 import axios from "../../utils/axios";
 
-const AddCarousel = () => {
+const EditCarousel = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [sorts, setSort] = useState(0);
@@ -17,6 +17,10 @@ const AddCarousel = () => {
       setSort((prev) => prev - 1);
     }
   };
+
+  const { id } = useParams();
+
+  const [singleCarousel, setSingleCarousel] = useState("");
 
   const [file, setFile] = useState();
   const imageRef = useRef();
@@ -40,36 +44,65 @@ const AddCarousel = () => {
     const link = form.link.value;
     const sort = sorts;
 
-    const image = form.img.files[0];
+    if (file) {
+      const image = form.img.files[0];
 
-    const fromData = new FormData();
-    fromData.append("image", image);
-    const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
+      const fromData = new FormData();
+      fromData.append("image", image);
+      const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
 
-    fetch(url, {
-      method: "POST",
-      body: fromData,
-    })
-      .then((res) => res.json())
-      .then((imgData) => {
-        if (imgData.success) {
-          const info = {
-            pictureName,
-            backGroundImage: imgData.data.url,
-            link,
-            sort,
-          };
+      fetch(url, {
+        method: "POST",
+        body: fromData,
+      })
+        .then((res) => res.json())
+        .then((imgData) => {
+          if (imgData.success) {
+            const info = {
+              pictureName,
+              backGroundImage: imgData.data.url,
+              link,
+              sort,
+            };
 
-          axios
-            .post("/api/system-config/add-carousel-pictures", info)
-            .then((res) => {
-              if (res.status === 200) {
-                navigate("/system/carousel-pictures");
-              }
-            });
-        }
-      });
+            axios
+              .put(`/api/system-config//edit-carousel-pictures/${id}`, info)
+              .then((res) => {
+                if (res.status === 200) {
+                  navigate("/system/carousel-pictures");
+                }
+              });
+          }
+        });
+    } else {
+      const newInfo = {
+        pictureName,
+        backGroundImage: singleCarousel?.backGroundImage,
+        link,
+        sort,
+      };
+      axios
+        .put(`/api/system-config//edit-carousel-pictures/${id}`, newInfo)
+        .then((res) => {
+          if (res.status === 200) {
+            navigate("/system/carousel-pictures");
+          }
+        });
+    }
   };
+
+  const getSingleCarousel = () => {
+    axios.get(`/api/system-config/carousel-pictures/${id}`).then((res) => {
+      setSingleCarousel(res.data);
+      setSort(res.data.sort);
+    });
+  };
+
+  console.log(singleCarousel);
+  useEffect(() => {
+    getSingleCarousel();
+  }, []);
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -90,7 +123,7 @@ const AddCarousel = () => {
                   <header className="mb-6">
                     {/* Title */}
                     <h1 className="text-2xl md:text-3xl text-slate-800 font-bold mb-2">
-                      Add Carousel Picture ✨
+                      Edit Carousel Picture ✨
                     </h1>
                   </header>
                   {/* Billing Information */}
@@ -113,6 +146,7 @@ const AddCarousel = () => {
                               type="text"
                               placeholder="Please enter a picture name"
                               name="pictureName"
+                              Value={singleCarousel?.pictureName}
                             />
                           </div>
                           <div className="flex-1">
@@ -128,6 +162,7 @@ const AddCarousel = () => {
                               type="text"
                               placeholder="lease enter a jump link"
                               name="link"
+                              Value={singleCarousel?.link}
                             />
                           </div>
                         </div>
@@ -148,9 +183,7 @@ const AddCarousel = () => {
                               <img
                                 className="w-full"
                                 src={
-                                  file
-                                    ? file
-                                    : "https://image.pngaaa.com/781/4773781-middle.png"
+                                  file ? file : singleCarousel?.backGroundImage
                                 }
                                 alt=""
                               />
@@ -161,7 +194,6 @@ const AddCarousel = () => {
                                 onChange={handleChange}
                                 type="file"
                                 name="img"
-                                required
                               />
                             </div>
                           </div>
@@ -253,4 +285,4 @@ const AddCarousel = () => {
   );
 };
 
-export default AddCarousel;
+export default EditCarousel;

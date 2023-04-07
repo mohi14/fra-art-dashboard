@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import DateSelect from "../../components/DateSelect";
 import PaginationClassic from "../../components/PaginationClassic";
 import Header from "../../partials/Header";
@@ -6,14 +6,49 @@ import Sidebar from "../../partials/Sidebar";
 import { BiEditAlt } from "react-icons/bi";
 import { RiDeleteBin5Line } from "react-icons/ri";
 import { Link } from "react-router-dom";
+import axios from "../../utils/axios";
+
+const dataFormater = (data) => {
+  const date = new Date(data).toDateString();
+  return date;
+};
 
 const SupportWallet = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [selectedItems, setSelectedItems] = useState([]);
 
+  const [walletName, setWalletName] = useState("");
+
   const handleSelectedItems = (selectedItems) => {
     setSelectedItems([...selectedItems]);
   };
+
+  const [allWallets, setAllWallets] = useState("");
+
+  const getAllWallet = () => {
+    axios
+      .get(`/api/system-config/all-supported-wallet?walletName=${walletName}`)
+      .then((res) => setAllWallets(res.data));
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("Are you really want to delete?")) {
+      axios
+        .delete(`/api/system-config/supported-wallet/delete/${id}`)
+        .then((res) => {
+          if (res.status === 200) {
+            getAllWallet();
+          }
+        });
+    }
+  };
+
+  useEffect(() => {
+    getAllWallet();
+  }, [allWallets]);
+
+  console.log(allWallets);
+
   return (
     <div className="flex h-screen overflow-hidden">
       {/* Sidebar */}
@@ -43,6 +78,7 @@ const SupportWallet = () => {
                   className="border-none"
                   type="text"
                   placeholder="please enter wallet name"
+                  onChange={(e) => setWalletName(e.target.value)}
                 />
               </div>
 
@@ -117,54 +153,88 @@ const SupportWallet = () => {
 
                 {/* Table body */}
                 <tbody className="text-sm">
-                  <tr>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>Metamask</div>
-                    </td>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-slate-100 rounded-full mr-2 sm:mr-3">
-                        <img
-                          className="ml-1"
-                          src="https://avatars.githubusercontent.com/u/6250754?s=200&v=4"
-                          width="50"
-                          height="50"
-                        />
-                      </div>
-                    </td>
+                  {allWallets &&
+                    allWallets.length > 0 &&
+                    allWallets.map((wallet) => (
+                      <tr key={wallet?._id}>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{wallet?.walletName}</div>
+                        </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div className="w-10 h-10 shrink-0 flex items-center justify-center bg-slate-100 rounded-full mr-2 sm:mr-3">
+                            <img
+                              className="ml-1"
+                              src={wallet?.walletIcon}
+                              width="50"
+                              height="50"
+                            />
+                          </div>
+                        </td>
 
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="bg-green-200 rounded-lg p-2">Yes</div>
-                    </td>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>dapp://www.cryptopark.pro</div>
-                    </td>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>https://metamask.io/download.html</div>
-                    </td>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>dapp://www.cryptopark.pro</div>
-                    </td>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>https://metamask.io/download.html</div>
-                    </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div className="bg-green-200 rounded-lg p-2">
+                            {wallet?.isSupported === false ? "No" : "Yes"}
+                          </div>
+                        </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{wallet?.IOSJumpLink}</div>
+                        </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{wallet?.IOSDownloadLink}</div>
+                        </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{wallet?.androidJumpLink}</div>
+                        </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{wallet?.androidDownloadLink}</div>
+                        </td>
 
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="bg-green-200 rounded-lg p-2">Yes</div>
-                    </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div className="bg-green-200 rounded-lg p-2">
+                            {wallet?.canIWakeUp === false ? "No" : "Yes"}
+                          </div>
+                        </td>
 
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>1</div>
-                    </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{wallet?.sort}</div>
+                        </td>
 
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div>2022-01-25</div>
-                    </td>
-                    <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
-                      <div className="flex items-center gap-2 text-blue-600">
-                        <BiEditAlt /> Modify <br /> <RiDeleteBin5Line /> Delete
-                      </div>
-                    </td>
-                  </tr>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap">
+                          <div>{dataFormater(wallet?.createdAt)}</div>
+                        </td>
+                        <td className="px-2 first:pl-5 last:pr-5 py-3 whitespace-nowrap w-px">
+                          <div className="space-x-1">
+                            <Link
+                              to={`/system/edit-support-wallet/${wallet?._id}`}
+                            >
+                              <button className="text-slate-400 hover:text-slate-500 rounded-full">
+                                <span className="sr-only">Edit</span>
+                                <svg
+                                  className="w-8 h-8 fill-current"
+                                  viewBox="0 0 32 32"
+                                >
+                                  <path d="M19.7 8.3c-.4-.4-1-.4-1.4 0l-10 10c-.2.2-.3.4-.3.7v4c0 .6.4 1 1 1h4c.3 0 .5-.1.7-.3l10-10c.4-.4.4-1 0-1.4l-4-4zM12.6 22H10v-2.6l6-6 2.6 2.6-6 6zm7.4-7.4L17.4 12l1.6-1.6 2.6 2.6-1.6 1.6z" />
+                                </svg>
+                              </button>
+                            </Link>
+
+                            <button
+                              className="text-rose-500 hover:text-rose-600 rounded-full"
+                              onClick={() => handleDelete(wallet?._id)}
+                            >
+                              <span className="sr-only">Delete</span>
+                              <svg
+                                className="w-8 h-8 fill-current"
+                                viewBox="0 0 32 32"
+                              >
+                                <path d="M13 15h2v6h-2zM17 15h2v6h-2z" />
+                                <path d="M20 9c0-.6-.4-1-1-1h-6c-.6 0-1 .4-1 1v2H8v2h1v10c0 .6.4 1 1 1h12c.6 0 1-.4 1-1V13h1v-2h-4V9zm-6 1h4v1h-4v-1zm7 3v9H11v-9h10z" />
+                              </svg>
+                            </button>
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
                 </tbody>
               </table>
             </div>

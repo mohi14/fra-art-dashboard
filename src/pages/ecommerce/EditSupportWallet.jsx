@@ -1,33 +1,28 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
 import axios from "../../utils/axios";
+import { Link, useNavigate, useParams } from "react-router-dom";
 
-const EditTransactionToken = () => {
+const EditSupportWallet = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  const [accuracys, setAccuracy] = useState(0);
   const [sorts, setSort] = useState(0);
 
-  const navigate = useNavigate();
   const { id } = useParams();
 
-  const handleAccurecyDecrease = () => {
-    if (accuracys !== 0) {
-      setAccuracy((prev) => prev - 1);
-    }
-  };
+  const [wallet, setWallet] = useState("");
 
-  const [transaction, setTransaction] = useState("");
+  const navigate = useNavigate();
 
   const handleSortDecrease = () => {
     if (sorts !== 0) {
       setSort((prev) => prev - 1);
     }
   };
-  const [file, setFile] = useState("");
+
+  const [file, setFile] = useState();
   const imageRef = useRef();
 
   const handleChange = (e) => {
@@ -38,42 +33,32 @@ const EditTransactionToken = () => {
     imageRef.current.click();
   };
 
-  const imageHostKey = import.meta.env.VITE_imgBB_key;
+  const getWallet = () => {
+    axios.get(`/api/system-config/supported-wallet/${id}`).then((res) => {
+      setWallet(res.data);
 
-  const getTransaction = () => {
-    axios.get(`/api/system-config/transaction-currency/${id}`).then((res) => {
-      setTransaction(res.data);
-      setAccuracy(res.data.accuracy);
       setSort(res.data.sort);
     });
   };
+
+  const imageHostKey = import.meta.env.VITE_imgBB_key;
 
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const form = event.target;
 
-    const chainName = form.chainName.value;
-    const token = form.token.value;
-    const tokenType = form.tokenType.value;
-    const contractAddress = form.contractAddress.value;
-    const accuracy = accuracys;
+    const walletName = form.walletName.value;
+    const isSupported = form.isSupported.value === "false" ? false : true;
+    const IOSJumpLink = form.IOSJumpLink.value;
+    const IOSDownloadLink = form.IOSDownloadLink.value;
+    const androidJumpLink = form.androidJumpLink.value;
+    const androidDownloadLink = form.androidDownloadLink.value;
+    const canIWakeUp = form.canIWakeUp.value === "false" ? false : true;
     const sort = sorts;
-    const usdChangeRate = Number(form.usdChangeRate.value);
-
-    // const data = {
-    //   chainName,
-    //   token,
-    //   tokenType,
-    //   contractAddress,
-    //   accuracy,
-    //   sort,
-    //   usdChangeRate,
-    // };
 
     if (file) {
       const image = form.img.files[0];
-
       const fromData = new FormData();
       fromData.append("image", image);
       const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
@@ -86,50 +71,53 @@ const EditTransactionToken = () => {
         .then((imgData) => {
           if (imgData.success) {
             const info = {
-              chainName,
-              icon: imgData.data.url,
-              token,
-              tokenType,
-              contractAddress,
-              accuracy,
+              walletName,
+              walletIcon: imgData.data.url,
+              isSupported,
+              IOSDownloadLink,
+              IOSJumpLink,
+              androidDownloadLink,
+              androidJumpLink,
+              canIWakeUp,
               sort,
-              usdChangeRate,
             };
 
             axios
-              .put(`/api/system-config/edit-transaction-currency/${id}`, info)
+              .put(`/api/system-config/edit-supported-wallet/${id}`, info)
               .then((res) => {
                 if (res.status === 200) {
-                  navigate("/system/transaction-currency");
+                  navigate("/system/support-wallet");
                 }
               });
           }
         });
     } else {
       const newInfo = {
-        chainName,
-        icon: transaction?.icon,
-        token,
-        tokenType,
-        contractAddress,
-        accuracy,
+        walletName,
+        walletIcon: wallet?.walletIcon,
+        isSupported,
+        IOSDownloadLink,
+        IOSJumpLink,
+        androidDownloadLink,
+        androidJumpLink,
+        canIWakeUp,
         sort,
-        usdChangeRate,
       };
-
       axios
-        .put(`/api/system-config/edit-transaction-currency/${id}`, newInfo)
+        .put(`/api/system-config/edit-supported-wallet/${id}`, newInfo)
         .then((res) => {
           if (res.status === 200) {
-            navigate("/system/transaction-currency");
+            navigate("/system/support-wallet");
           }
         });
     }
   };
 
   useEffect(() => {
-    getTransaction();
+    getWallet();
   }, []);
+
+  console.log(wallet);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -151,7 +139,7 @@ const EditTransactionToken = () => {
                   <header className="mb-6">
                     {/* Title */}
                     <h1 className="text-2xl md:text-3xl text-slate-800 font-bold mb-2">
-                      Edit Transaction Token ✨
+                      Edit supported wallet ✨
                     </h1>
                   </header>
                   {/* Billing Information */}
@@ -162,35 +150,19 @@ const EditTransactionToken = () => {
                         <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
-                              className="block text-sm font-medium mb-1"
-                              htmlFor="card-country"
-                            >
-                              Chain <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                              id="card-address"
-                              className="form-input w-full"
-                              type="text"
-                              name="chainName"
-                              required
-                              Value={transaction?.chainName}
-                            />
-                          </div>
-                          <div className="flex-1">
-                            <label
                               className="block font-medium mb-1"
                               htmlFor="card-country"
                             >
-                              Icon
+                              Wallet Icon
                             </label>
 
                             <div
-                              onClick={imageHandler}
                               className="border-dotted border-2 p-16"
+                              onClick={imageHandler}
                             >
                               <img
                                 width={200}
-                                src={file ? file : transaction?.icon}
+                                src={file ? file : wallet?.walletIcon}
                                 alt=""
                               />
                               <input
@@ -203,24 +175,115 @@ const EditTransactionToken = () => {
                               />
                             </div>
                           </div>
-                        </div>
-                        {/* 2nd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
                               htmlFor="card-country"
                             >
-                              Token Type{" "}
+                              Is it supported PC{" "}
+                              <span className="text-rose-500">*</span>
+                            </label>
+                            <select
+                              id="card-country"
+                              className="form-select w-full"
+                              name="isSupported"
+                            >
+                              <option
+                                selected={wallet?.isSupported === true}
+                                value={true}
+                              >
+                                Yes
+                              </option>
+                              <option
+                                selected={wallet?.isSupported === false}
+                                value={false}
+                              >
+                                No
+                              </option>
+                            </select>
+                          </div>
+                        </div>
+                        {/* 1st row */}
+                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                          <div className="flex-1">
+                            <label
+                              className="block text-sm font-medium mb-1"
+                              htmlFor="card-address"
+                            >
+                              Wallet Name
                               <span className="text-rose-500">*</span>
                             </label>
                             <input
                               id="card-address"
                               className="form-input w-full"
                               type="text"
-                              name="tokenType"
-                              required
-                              Value={transaction?.tokenType}
+                              placeholder="Please enter wallet name"
+                              name="walletName"
+                              Value={wallet?.walletName}
+                            />
+                          </div>
+                          <div className="flex-1">
+                            <label
+                              className="block text-sm font-medium mb-1"
+                              htmlFor="card-country"
+                            >
+                              Can i wake up directly
+                              <span className="text-rose-500">*</span>
+                            </label>
+                            <select
+                              id="card-country"
+                              className="form-select w-full"
+                              name="canIWakeUp"
+                            >
+                              <option
+                                selected={wallet?.canIWakeUp === true}
+                                value={true}
+                              >
+                                Yes
+                              </option>
+                              <option
+                                selected={wallet?.canIWakeUp === false}
+                                value={false}
+                              >
+                                No
+                              </option>
+                            </select>
+                          </div>
+                          <div className="flex-1">
+                            <label
+                              className="block text-sm font-medium mb-1"
+                              htmlFor="card-address"
+                            >
+                              IOS Jump link{" "}
+                              <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              id="card-address"
+                              className="form-input w-full"
+                              type="text"
+                              placeholder="Please enter IOS jump link"
+                              name="IOSJumpLink"
+                              Value={wallet?.IOSJumpLink}
+                            />
+                          </div>
+                        </div>
+                        {/* 2nd row */}
+                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
+                          <div className="flex-1">
+                            <label
+                              className="block text-sm font-medium mb-1"
+                              htmlFor="card-address"
+                            >
+                              IOS Download link{" "}
+                              <span className="text-rose-500">*</span>
+                            </label>
+                            <input
+                              id="card-address"
+                              className="form-input w-full"
+                              type="text"
+                              placeholder="Please enter IOS download link"
+                              name="IOSDownloadLink"
+                              Value={wallet?.IOSDownloadLink}
                             />
                           </div>
                           <div className="flex-1">
@@ -228,72 +291,38 @@ const EditTransactionToken = () => {
                               className="block text-sm font-medium mb-1"
                               htmlFor="card-address"
                             >
-                              Token <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                              id="card-address"
-                              className="form-input w-full"
-                              type="text"
-                              name="token"
-                              required
-                              Value={transaction?.token}
-                            />
-                          </div>
-                        </div>
-                        {/* 2nd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
-                          <div className="flex-1">
-                            <label
-                              className="block text-sm font-medium mb-1"
-                              htmlFor="card-country"
-                            >
-                              Contract address
+                              Android jump link{" "}
                               <span className="text-rose-500">*</span>
                             </label>
                             <input
                               id="card-address"
                               className="form-input w-full"
                               type="text"
-                              name="contractAddress"
-                              required
-                              Value={transaction?.contractAddress}
+                              placeholder="Please enter the android jump link"
+                              name="androidJumpLink"
+                              Value={wallet?.androidJumpLink}
                             />
                           </div>
+                        </div>
+                        {/* 2nd row */}
+                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
                               htmlFor="card-address"
                             >
-                              Accuracy <span className="text-rose-500">*</span>
+                              Android download link
+                              <span className="text-rose-500">*</span>
                             </label>
-                            <div className="flex items-center">
-                              <span
-                                className="bg-gray-200 px-3 py-1 border"
-                                onClick={handleAccurecyDecrease}
-                              >
-                                -
-                              </span>
-
-                              <input
-                                id="card-address"
-                                className="form-input w-full"
-                                type="number"
-                                placeholder="Please enter"
-                                readOnly
-                                value={accuracys}
-                                min={0}
-                              />
-                              <span
-                                className="bg-gray-200 px-3 py-1 border"
-                                onClick={() => setAccuracy((prev) => prev + 1)}
-                              >
-                                +
-                              </span>
-                            </div>
+                            <input
+                              id="card-address"
+                              className="form-input w-full"
+                              type="text"
+                              placeholder="Please enter the android download link"
+                              name="androidDownloadLink"
+                              Value={wallet?.androidDownloadLink}
+                            />
                           </div>
-                        </div>
-                        {/* 2nd row */}
-                        <div className="md:flex space-y-4 md:space-y-0 md:space-x-4">
                           <div className="flex-1">
                             <label
                               className="block text-sm font-medium mb-1"
@@ -325,41 +354,20 @@ const EditTransactionToken = () => {
                               </span>
                             </div>
                           </div>
-
-                          <div className="flex-1">
-                            <label
-                              className="block text-sm font-medium mb-1"
-                              htmlFor="card-country"
-                            >
-                              USD tex change rate
-                              <span className="text-rose-500">*</span>
-                            </label>
-                            <input
-                              id="card-address"
-                              className="form-input w-full"
-                              type="number"
-                              name="usdChangeRate"
-                              required
-                              Value={transaction?.usdChangeRate}
-                            />
-                          </div>
                         </div>
                       </div>
                       <div className="flex justify-end gap-6 my-5">
-                        <Link to="/system/transaction-currency">
-                          <button
-                            className="bg-blue-500 text-white rounded-lg p-2"
-                            type=""
-                          >
-                            Indeed Set
-                          </button>
-                        </Link>
                         <button
-                          className="border  rounded-lg p-2"
+                          className="bg-blue-500 text-white rounded-lg p-2"
                           type="submit"
                         >
-                          Take Eliminate
+                          Determine
                         </button>
+                        <Link to="/system/support-wallet">
+                          <button className="border  rounded-lg p-2" type="">
+                            Cancel
+                          </button>
+                        </Link>
                       </div>
                     </form>
                   </div>
@@ -373,4 +381,4 @@ const EditTransactionToken = () => {
   );
 };
 
-export default EditTransactionToken;
+export default EditSupportWallet;

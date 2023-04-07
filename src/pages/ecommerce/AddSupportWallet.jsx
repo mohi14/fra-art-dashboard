@@ -2,11 +2,15 @@ import React, { useRef, useState } from "react";
 
 import Sidebar from "../../partials/Sidebar";
 import Header from "../../partials/Header";
+import axios from "../../utils/axios";
+import { Link, useNavigate } from "react-router-dom";
 
 const AddSupportWallet = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [sorts, setSort] = useState(0);
+
+  const navigate = useNavigate();
 
   const handleSortDecrease = () => {
     if (sorts !== 0) {
@@ -25,18 +29,55 @@ const AddSupportWallet = () => {
     imageRef.current.click();
   };
 
+  const imageHostKey = import.meta.env.VITE_imgBB_key;
+
   const handleSubmit = (event) => {
     event.preventDefault();
 
     const form = event.target;
 
     const walletName = form.walletName.value;
-    const isSupported = form.isSupported.value;
+    const isSupported = form.isSupported.value === "false" ? false : true;
     const IOSJumpLink = form.IOSJumpLink.value;
     const IOSDownloadLink = form.IOSDownloadLink.value;
     const androidJumpLink = form.androidJumpLink.value;
     const androidDownloadLink = form.androidDownloadLink.value;
-    const canIWakeUp = form.canIWakeUp.value;
+    const canIWakeUp = form.canIWakeUp.value === "false" ? false : true;
+    const sort = sorts;
+
+    const image = form.img.files[0];
+    const fromData = new FormData();
+    fromData.append("image", image);
+    const url = `https://api.imgbb.com/1/upload?key=${imageHostKey}`;
+
+    fetch(url, {
+      method: "POST",
+      body: fromData,
+    })
+      .then((res) => res.json())
+      .then((imgData) => {
+        if (imgData.success) {
+          const info = {
+            walletName,
+            walletIcon: imgData.data.url,
+            isSupported,
+            IOSDownloadLink,
+            IOSJumpLink,
+            androidDownloadLink,
+            androidJumpLink,
+            canIWakeUp,
+            sort,
+          };
+
+          axios
+            .post("/api/system-config/add-supported-wallet", info)
+            .then((res) => {
+              if (res.status === 200) {
+                navigate("/system/support-wallet");
+              }
+            });
+        }
+      });
   };
 
   return (
@@ -260,12 +301,15 @@ const AddSupportWallet = () => {
                         <button
                           className="bg-blue-500 text-white rounded-lg p-2"
                           type="submit"
+                          disabled={!file && true}
                         >
                           Determine
                         </button>
-                        <button className="border  rounded-lg p-2" type="">
-                          Cancel
-                        </button>
+                        <Link to="/system/support-wallet">
+                          <button className="border  rounded-lg p-2" type="">
+                            Cancel
+                          </button>
+                        </Link>
                       </div>
                     </form>
                   </div>

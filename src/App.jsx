@@ -134,6 +134,8 @@ import EditAdmin from "./pages/ecommerce/EditAdmin";
 import EditRole from "./pages/ecommerce/EditRole";
 import EditMailConfiguration from "./pages/ecommerce/EditMailConfiguration";
 import EditTransactionToken from "./pages/ecommerce/EditTransactionToken";
+import EditSupportWallet from "./pages/ecommerce/EditSupportWallet";
+import EditCarousel from "./pages/ecommerce/EditCarousel";
 
 function App() {
   const location = useLocation();
@@ -250,6 +252,7 @@ function App() {
           element={<CarouselPictures />}
         />
         <Route path="/system/add-carousel" element={<AddCarousel />} />
+        <Route path="/system/edit-carousel/:id" element={<EditCarousel />} />
         <Route path="/system/picture-config" element={<PictureConfig />} />
         <Route
           path="/system/mail-configuration"
@@ -278,6 +281,10 @@ function App() {
         <Route
           path="/system/add-support-wallet"
           element={<AddSupportWallet />}
+        />
+        <Route
+          path="/system/edit-support-wallet/:id"
+          element={<EditSupportWallet />}
         />
         <Route path="/system/administrator" element={<Administrator />} />
         <Route
