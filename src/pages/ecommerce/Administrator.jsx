@@ -60,7 +60,7 @@ const Administrator = () => {
                   Administrator ✨
                 </h1>
               </div>
-              <div>
+              {/* <div>
                 <label className="mr-2" for="status">
                   Name
                 </label>
@@ -69,8 +69,8 @@ const Administrator = () => {
                   type="text"
                   placeholder="please enter user name"
                 />
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <label className="mr-2" for="status">
                   Email
                 </label>
@@ -79,9 +79,9 @@ const Administrator = () => {
                   type="tel"
                   placeholder="please enter email"
                 />
-              </div>
+              </div> */}
 
-              <div>
+              {/* <div>
                 <label className="mr-2" for="status">
                   Status
                 </label>
@@ -91,8 +91,8 @@ const Administrator = () => {
                   <option>B</option>
                   <option>C</option>
                 </select>
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <label className="mr-2" for="status">
                   Creation time
                 </label>
@@ -101,7 +101,7 @@ const Administrator = () => {
                   type="date"
                   placeholder="please enter role name"
                 />
-              </div>
+              </div> */}
 
               {/* Right: Actions */}
               <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">

@@ -208,7 +208,11 @@ const SystemConfiguration = () => {
 
             {/* Pagination */}
             <div className="mt-8">
-              <PaginationClassic />
+              <PaginationClassic
+                setPageNumber={"jkkkjkl"}
+                pageNumber={"kjkljlk"}
+                allCategories={"ljlkjkl"}
+              />
             </div>
           </div>
         </main>

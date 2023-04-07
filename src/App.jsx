@@ -235,18 +235,18 @@ function App() {
           element={<EditTransactionToken />}
         />
 
-        <Route
+        {/* <Route
           path="/system/language-management"
           element={<LanguageManagement />}
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/system/notification-types"
           element={<NotificationTypes />}
-        />
-        <Route
+        /> */}
+        {/* <Route
           path="/system/system-configuration"
           element={<SystemConfiguration />}
-        />
+        /> */}
         <Route
           path="/system/carousel-pictures"
           element={<CarouselPictures />}
@@ -270,7 +270,7 @@ function App() {
           path="/system/configuration-management"
           element={<ConfigurationManagement />}
         />
-        <Route path="/system/main-chain-info" element={<MainChainInfo />} />
+        {/* <Route path="/system/main-chain-info" element={<MainChainInfo />} /> */}
 
         <Route path="/system/add-main-chain" element={<AddMainChain />} />
         <Route path="/system/add-role" element={<AddRole />} />
@@ -297,8 +297,8 @@ function App() {
         />
 
         <Route path="/system/role-management" element={<RoleManagement />} />
-        <Route path="/system/menu-management" element={<MenuManagement />} />
-        <Route path="/system/file-management" element={<FileManagement />} />
+        {/* <Route path="/system/menu-management" element={<MenuManagement />} /> */}
+        {/* <Route path="/system/file-management" element={<FileManagement />} /> */}
 
         <Route exact path="/" element={<Dashboard />} />
         <Route path="/dashboard/analytics" element={<Analytics />} />

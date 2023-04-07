@@ -10,6 +10,8 @@ const PictureConfig = () => {
 
   const [allImages, setAllimages] = useState("");
 
+  const [isLoading, setIsloading] = useState(false);
+
   // images hostinging
   const imageHostKey = import.meta.env.VITE_imgBB_key;
 
@@ -139,6 +141,8 @@ const PictureConfig = () => {
 
     // console.log("links", imageUploaded);
     let imageUploaded = {};
+
+    setIsloading(true);
 
     fetch(url, {
       method: "POST",
@@ -528,6 +532,7 @@ const PictureConfig = () => {
                           <button
                             className="bg-blue-500 text-white rounded-lg p-2"
                             type="submit"
+                            disabled={isLoading}
                           >
                             Confirm
                           </button>

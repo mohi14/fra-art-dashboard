@@ -1320,7 +1320,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li>
-                          <li className="mb-1 last:mb-0">
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/system/language-management"
@@ -1333,8 +1333,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 Language Management
                               </span>
                             </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
+                          </li> */}
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/system/notification-types"
@@ -1347,8 +1347,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 Notification Types
                               </span>
                             </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
+                          </li> */}
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/system/system-configuration"
@@ -1361,7 +1361,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 System Configuration
                               </span>
                             </NavLink>
-                          </li>
+                          </li> */}
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
@@ -1390,7 +1390,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li>
-                          <li className="mb-1 last:mb-0">
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/system/main-chain-info"
@@ -1403,7 +1403,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 Main Chain Information Configuration
                               </span>
                             </NavLink>
-                          </li>
+                          </li> */}
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
@@ -1538,7 +1538,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                               </span>
                             </NavLink>
                           </li>
-                          <li className="mb-1 last:mb-0">
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/system/menu-management"
@@ -1551,8 +1551,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 Menu Management
                               </span>
                             </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
+                          </li> */}
+                          {/* <li className="mb-1 last:mb-0">
                             <NavLink
                               end
                               to="/system/file-management"
@@ -1565,7 +1565,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 File Management
                               </span>
                             </NavLink>
-                          </li>
+                          </li> */}
                         </ul>
                       </div>
                     </React.Fragment>
