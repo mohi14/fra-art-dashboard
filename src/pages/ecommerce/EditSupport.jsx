@@ -34,8 +34,12 @@ const EditSupport = () => {
     });
   };
 
+  console.log(supprt, "jkjk");
+
   useEffect(() => {
-    axios.get(`/api/content/support/${id}`).then((res) => setSupprt(res.data));
+    axios
+      .get(`/api/content/support/list/${id}`)
+      .then((res) => setSupprt(res.data));
   }, []);
   return (
     <div className="flex h-screen overflow-hidden">
@@ -109,7 +113,7 @@ const EditSupport = () => {
                           <button
                             type="submit"
                             className="btn bg-indigo-500 hover:bg-indigo-600 text-white ml-3"
-                            disabled={!language || !title}
+                            disabled={!title}
                           >
                             Take Eliminate
                           </button>

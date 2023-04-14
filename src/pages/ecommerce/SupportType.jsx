@@ -30,7 +30,7 @@ const SupportType = () => {
 
   const handleDelete = (id) => {
     if (window.confirm("Are you really want to delete this article?")) {
-      axios.delete(`/api/content/article/delete/${id}`).then((res) => {
+      axios.delete(`/api/content/delete/Support/${id}`).then((res) => {
         if (res.status === 200) {
           alert(res.data.message);
           getSupportType();
